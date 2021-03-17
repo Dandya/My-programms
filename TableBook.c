@@ -43,7 +43,31 @@ int* searchIndexesOfBooksByAuthor(book* arrOfBooks, int countBooks, char* author
 int* searchIndexesOfBooksByPublisher(book* arrOfBooks, int countBooks, char* publisher);
 int* searchIndexesOfBooksByYear(book* arrOfBooks, int countBooks, int year);
 int* searchIndexesOfBooksByRating(book* arrOfBooks, int countBooks, int rating);
-int clear_input_buffer(void);
+int clearInputBuffer(void);
+/**********************************************/
+int checkInputData(int argc, char** argv)
+{
+    if(argc == 3 || argc == 2)
+    {
+        int index = 0;
+        while(argv[1][index] != '\0')
+        {
+            index++;
+        }
+        if(argv[1][index-5] == '.' &&  argv[1][index-4] == 'j' && argv[1][index-3] == 's' && argv[1][index-2] == 'o' && argv[1][index-1] == 'n')
+        {
+            return 1;
+        }
+        else 
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
 /**********************************************/
 book* createArrOfBooksFromJSON(char* nameFileJSON, int* countBooks)
 {
@@ -808,19 +832,24 @@ int* searchIndexesOfBooksByRating(book* arrOfBooks, int countBooks, int rating)
     return indexesOfFoundBooks; 
 }
 /*********************************************/
-int clear_input_buffer(void) {
+int clearInputBuffer(void) {
     int ch;
-    while (((ch = getchar()) != EOF) && (ch != '\n')) /* void */;
+    while (((ch = getchar()) != EOF) && (ch != '\n'));
     return ch;
 }
 /*********************************************/
 int main(int argc, char** argv)
 {
+    if ( ! checkInputData(argc, argv) )
+    {
+        printf("bad input data. Need 1 - json file, 2 - file for writing the table\n");
+        return 1;
+    }
     int countBooks = 0;
     book* arrOfBooks;
     int exit = 0;
     int* widthOfAllColumn;
-    char* nameFile = (char*)malloc(30*sizeof(char));
+    char* nameFile = (char*)malloc(257*sizeof(char));
     countBooks = 0;
     nameFile = argv[1];
     arrOfBooks = createArrOfBooksFromJSON(nameFile, &countBooks);
@@ -848,7 +877,16 @@ int main(int argc, char** argv)
         lenStr[index] = strLen(headlines[index]);
     }
     widthOfAllColumn = searchWidthOfAllColumn(arrOfBooks, countBooks, lenStr);
-    nameFile = argv[2];
+    if(argc == 3)
+    {
+       nameFile = argv[2]; 
+    }
+    else
+    {
+        printf("Input name file for writing table: ");
+        clearInputBuffer();
+        gets(nameFile);
+    } 
     printTableInFile(nameFile, arrOfBooks, countBooks, headlines, lenStr, widthOfAllColumn);
     while(!exit)
     {
@@ -873,7 +911,7 @@ int main(int argc, char** argv)
                 case 1: 
                     printf("Input title: \n");
                     char title[60];
-                    clear_input_buffer();
+                    clearInputBuffer();
                     gets(title);
                     printf("Input: %s", title);
                     indexesOfFoundBooks =  searchIndexesOfBooksByTitle(arrOfBooks, countBooks, title);
@@ -890,7 +928,7 @@ int main(int argc, char** argv)
                 case 2:
                     printf("Input author: ");
                     char author[60];
-                    clear_input_buffer();
+                    clearInputBuffer();
                     gets(author);
                     printf("Input: %s", author);
                     indexesOfFoundBooks =  searchIndexesOfBooksByAuthor(arrOfBooks, countBooks, author);
@@ -923,7 +961,7 @@ int main(int argc, char** argv)
                 case 4:
                     printf("Input publisher: ");
                     char publisher[60];
-                    clear_input_buffer();
+                    clearInputBuffer();
                     gets(publisher);
                     printf("Input: %s", title);
                     putc('\n', stdout);
@@ -961,7 +999,7 @@ int main(int argc, char** argv)
         else if(choose == 2)
         {
             printf("Table:\n");
-            FILE* table = fopen(argv[2], "r");
+            FILE* table = fopen(nameFile, "r");
             char charInTable;
             while((charInTable = fgetc(table)) != EOF)
             {
