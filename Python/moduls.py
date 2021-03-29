@@ -6,4 +6,5 @@ def modul(coef = [0], mod = 10):
         newCoef.append(digit%mod)
     return newCoef
 
-def comparison()
+def comparison():
+    pass
