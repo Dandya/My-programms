@@ -7,12 +7,3 @@ def moreRandomAB(A,B):
     for iteration in range(countDigits):
         arrRandomNumbers.append(random.randint(A,B))
     return arrRandomNumbers
-
-a = int(input("Input two numbers A and B to return randon x in (A,B):\n"))
-b = int(input())
-if  a > b:
-    tmp = a
-    a = b
-    b = tmp
-print(f"result: {moreRandomAB(a,b)}")
-
